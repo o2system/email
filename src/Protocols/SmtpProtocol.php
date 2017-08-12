@@ -65,7 +65,7 @@ class SmtpProtocol extends AbstractProtocol
     // ------------------------------------------------------------------------
 
     /**
-     * AbstractProtocol::__construct
+     * SmtpProtocol::__construct
      *
      * @param \O2System\Email\Spool $spool
      */
@@ -167,8 +167,6 @@ class SmtpProtocol extends AbstractProtocol
     {
         if ( $this->connect() ) {
 
-            print_out($this);
-
             //email from
             fputs( $this->handle, "MAIL FROM: <" . $this->message->getFrom()->getEmail() . ">" . "\r\n" );
             if ( false !== ( $response = fgets( $this->handle, 4096 ) ) ) {
@@ -237,10 +235,7 @@ class SmtpProtocol extends AbstractProtocol
 
             fputs( $this->handle, $finalHeaders . $finalBody );
 
-            print_out( fgets( $this->handle, 4096 ) );
             if ( false !== ( $response = fgets( $this->handle, 4096 ) ) ) {
-
-                print_out( $response );
 
                 $this->spool->addLog( $response );
 
@@ -253,14 +248,12 @@ class SmtpProtocol extends AbstractProtocol
                 }
             }
 
-            print_out( 'test' );
-
             // say goodbye
-            fputs( $smtpConnect, "QUIT" . "\r\n" );
-            $response = fgets( $smtpConnect, 4096 );
+            fputs( $this->handle, "QUIT" . "\r\n" );
+            $response = fgets( $this->handle, 4096 );
             $logArray[ 'quitresponse' ] = "$response";
             $logArray[ 'quitcode' ] = substr( $response, 0, 3 );
-            fclose( $smtpConnect );
+            fclose( $this->handle );
 
             //a return value of 221 in $retVal["quitcode"] is a success
             return ( $logArray );
