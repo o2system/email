@@ -1,7 +1,7 @@
 # O2System Email
 O2System Email is a PHP Email Protocol Sender Library which is build for working more powerful with O2System Framework, but also can be used for integrated with others as standalone version with limited features.
 
-### Composer Instalation
+### Composer Installation
 The best way to install O2System Email is to use [Composer](https://getcomposer.org)
 ```
 composer require o2system/email --prefer-dist dev-master

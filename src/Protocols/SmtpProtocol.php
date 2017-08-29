@@ -155,7 +155,7 @@ class SmtpProtocol extends AbstractProtocol
         return false;
     }
 
-    protected function disconnectM()
+    protected function disconnect()
     {
         if ( $this->connect() ) {
             fputs( $this->handle, "RSET" . "\r\n" );
