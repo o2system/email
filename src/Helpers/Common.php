@@ -94,7 +94,7 @@ if( ! function_exists( 'prepare_quoted_printable' ) ) {
      * @param	string
      * @return	string
      */
-    function prepare_quoted_printable($str)
+    function prepare_quoted_printable($str, $crlf = PHP_EOL)
     {
         // ASCII code numbers for "safe" characters that can always be
         // used literally, without encoding, as described in RFC 2049.
@@ -116,7 +116,7 @@ if( ! function_exists( 'prepare_quoted_printable' ) ) {
         // However, many developers choose to override that and violate
         // the RFC rules due to (apparently) a bug in MS Exchange,
         // which only works with "\n".
-        if ($this->crlf === "\r\n")
+        if ($crlf === "\r\n")
         {
             return quoted_printable_encode($str);
         }

@@ -38,6 +38,8 @@ class MailProtocol extends AbstractProtocol
      */
     protected function sending( $finalMessage )
     {
+        $finalMessage[ 'body' ] = $finalMessage[ 'headers' ] . str_repeat( $this->newLine, 2 ) . $finalMessage[ 'body' ];
+
         if ( ini_get( 'safe_mode' ) ) {
             return mail(
                 $finalMessage[ 'recipients' ],
@@ -45,6 +47,20 @@ class MailProtocol extends AbstractProtocol
                 $finalMessage[ 'body' ],
                 $finalMessage[ 'headers' ] );
         } else {
+
+            // validate email for shell below accepts by reference,
+            // so this needs to be assigned to a variable
+            $from = $this->cleanEmail( $finalMessage[ 'from' ]->getEmail() );
+
+            if ( ! $this->validateEmailForShell( $from ) ) {
+                return mail(
+                    $finalMessage[ 'recipients' ],
+                    $finalMessage[ 'subject' ],
+                    $finalMessage[ 'body' ],
+                    $finalMessage[ 'headers' ]
+                );
+            }
+
             // most documentation of sendmail using the "-f" flag lacks a space after it, however
             // we've encountered servers that seem to require it to be in place.
             return mail(
@@ -52,7 +68,7 @@ class MailProtocol extends AbstractProtocol
                 $finalMessage[ 'subject' ],
                 $finalMessage[ 'body' ],
                 $finalMessage[ 'headers' ],
-                '-f ' . $finalMessage[ 'returnPath' ]
+                '-f ' . $from
             );
         }
     }

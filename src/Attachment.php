@@ -23,7 +23,7 @@ use O2System\Spl\Info\SplFileInfo;
  */
 class Attachment extends SplFileInfo
 {
-    public function __toString()
+    public function getBody()
     {
         $string = '';
 

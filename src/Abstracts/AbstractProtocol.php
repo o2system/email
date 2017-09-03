@@ -46,6 +46,23 @@ abstract class AbstractProtocol
      */
     protected $newLine = PHP_EOL;
 
+    /**
+     * AbstractProtocol::$boundary
+     *
+     * @var string
+     */
+    protected $boundary;
+
+    /**
+     * AbstractProtocol::$multipart
+     *
+     * Whether to send multipart alternatives.
+     * Yahoo! doesn't seem to like these.
+     *
+     * @var    bool
+     */
+    protected $multipart = true;
+
     // ------------------------------------------------------------------------
 
     /**
@@ -56,6 +73,7 @@ abstract class AbstractProtocol
     public function __construct( Spool $spool )
     {
         $this->spool = $spool;
+        $this->boundary = uniqid( '__o2emailBoundary_alt_' );
     }
 
     // ------------------------------------------------------------------------
@@ -94,6 +112,7 @@ abstract class AbstractProtocol
         $headers[ 'Mime-Version' ] = $this->message->getMimeVersion();
 
         // Add Message To Header
+        $recipients = [];
         if ( false !== ( $to = $this->message->getTo() ) ) {
             foreach ( $to as $address ) {
                 $recipients[] = $address->getEmail();
@@ -140,6 +159,12 @@ abstract class AbstractProtocol
                 $headers[ 'Content-Transfer-Encoding' ] = $this->message->getEncoding();
                 break;
             case 'html':
+                if ( $this->multipart === false ) {
+                    $headers[ 'Content-Type' ] = 'text/html; charset=' . $this->message->getCharset();
+                    $headers[ 'Content-Transfer-Encoding' ] = 'quoted-printable';
+                } else {
+                    $headers[ 'Content-Type' ] = 'multipart/alternative; boundary="' . $this->boundary . '"';
+                }
 
                 break;
         }
@@ -158,8 +183,42 @@ abstract class AbstractProtocol
      */
     protected function prepareBody()
     {
-        if ( $this->message->getContentType() !== 'html' ) {
-            $body = $this->wordwrap( $this->message->getBody() );
+        if ( $this->message->getContentType() === 'html' ) {
+            if ( $this->multipart === false ) {
+                $body = $this->wordwrap( $this->message->getBody() );
+            } else {
+                $altBody = $this->message->getAltBody();
+                $altBody = empty( $altBody ) ? strip_tags( $this->message->getBody() ) : $altBody;
+
+                $body = 'This is a multi-part message in MIME format.'
+                    . $this->newLine
+                    . 'Your email application may not support this format.'
+                    . str_repeat( $this->newLine, 2 )
+                    . '--'
+                    . $this->boundary
+                    . $this->newLine
+                    . 'Content-Type: text/plain; charset='
+                    . $this->message->getCharset()
+                    . $this->newLine
+                    . 'Content-Transfer-Encoding: '
+                    . $this->message->getEncoding()
+                    . str_repeat( $this->newLine, 2 )
+                    . $altBody
+                    . str_repeat( $this->newLine, 2 )
+                    . '--'
+                    . $this->boundary
+                    . $this->newLine
+                    . 'Content-Type: text/html; charset='
+                    . $this->message->getCharset()
+                    . $this->newLine
+                    . 'Content-Transfer-Encoding: quoted-printable'
+                    . str_repeat( $this->newLine, 2 )
+                    . prepare_quoted_printable( $this->wordwrap( $this->message->getBody() ) )
+                    . str_repeat( $this->newLine, 2 )
+                    . '--' . $this->boundary
+                    . '--';
+            }
+
         } else {
             $body = $this->message->getBody();
         }
@@ -214,7 +273,7 @@ abstract class AbstractProtocol
         foreach ( explode( "\n", $string ) as $line ) {
             // Is the line within the allowed character count?
             // If so we'll join it to the output and continue
-            if ( byte_safe_strlen( $line ) <= $limit ) {
+            if ( mb_strlen( $line ) <= $limit ) {
                 $output .= $line . $this->newLine;
                 continue;
             }
@@ -227,9 +286,9 @@ abstract class AbstractProtocol
                 }
 
                 // Trim the word down
-                $temp .= byte_safe_substr( $line, 0, $limit - 1 );
-                $line = byte_safe_substr( $line, $limit - 1 );
-            } while ( byte_safe_strlen( $line ) > $limit );
+                $temp .= mb_substr( $line, 0, $limit - 1 );
+                $line = mb_substr( $line, $limit - 1 );
+            } while ( mb_strlen( $line ) > $limit );
 
             // If $temp contains data it means we had to split up an over-length
             // word into smaller chunks so we'll add it back to our current line
@@ -273,6 +332,28 @@ abstract class AbstractProtocol
     // --------------------------------------------------------------------
 
     /**
+     * Clean Extended Email Address: Joe Smith <joe@smith.com>
+     *
+     * @param    string
+     *
+     * @return    string
+     */
+    public function cleanEmail( $email )
+    {
+        if ( ! is_array( $email ) ) {
+            return preg_match( '/\<(.*)\>/', $email, $match ) ? $match[ 1 ] : $email;
+        }
+
+        $clean_email = [];
+
+        foreach ( $email as $addy ) {
+            $clean_email[] = preg_match( '/\<(.*)\>/', $addy, $match ) ? $match[ 1 ] : $addy;
+        }
+
+        return (string)$clean_email;
+    }
+
+    /**
      * AbstractProtocol::validateEmailForShell
      *
      * Applies stricter, shell-safe validation to email addresses.
@@ -290,7 +371,7 @@ abstract class AbstractProtocol
     protected function validateEmailForShell( &$email )
     {
         if ( function_exists( 'idn_to_ascii' ) && $atpos = strpos( $email, '@' ) ) {
-            $email = byte_safe_substr( $email, 0, ++$atpos ) . idn_to_ascii( byte_safe_substr( $email, $atpos ) );
+            $email = mb_substr( $email, 0, ++$atpos ) . idn_to_ascii( mb_substr( $email, $atpos ) );
         }
 
         return ( filter_var( $email,
@@ -312,6 +393,9 @@ abstract class AbstractProtocol
     {
         $this->message = $message;
 
+        // GEt final from
+        $finalMessage[ 'from' ] = $this->message->getFrom();
+
         // Get final subject
         $finalMessage[ 'subject' ] = $this->message->getSubject();
 
@@ -326,6 +410,16 @@ abstract class AbstractProtocol
 
         // Get final body
         $finalMessage[ 'body' ] = $this->prepareBody();
+
+        // Attach final body
+        if ( false !== ( $attachments = $this->message->getAttachments() ) ) {
+            $finalMessage[ 'body' ] .= str_repeat( $this->newLine, 2 );
+
+            foreach( $attachments as $attachment ) {
+                $finalMessage[ 'body' ] .= '--'.$this->boundary.$this->newLine
+                    .$attachment->getBody().$this->newLine.'--'.$this->boundary.'--';
+            }
+        }
 
         // Get final return-path
         $finalMessage[ 'returnPath' ] = $this->message->getReturnPath();

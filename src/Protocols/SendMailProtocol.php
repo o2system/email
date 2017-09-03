@@ -21,7 +21,7 @@ use O2System\Email\Abstracts\AbstractProtocol;
  *
  * @package O2System\Email\Protocols
  */
-class SendMailProtocol extends AbstractProtocol
+class SendmailProtocol extends AbstractProtocol
 {
     /**
      * SendingMailProtocol::sending
@@ -34,15 +34,28 @@ class SendMailProtocol extends AbstractProtocol
      */
     protected function sending( $finalMessage )
     {
+        // validate email for shell below accepts by reference,
+        // so this needs to be assigned to a variable
+        $from = $this->cleanEmail( $finalMessage[ 'from' ]->getEmail() );
+
+        if ($this->validateEmailForShell($from))
+        {
+            $from = '-f '.$from;
+        }
+        else
+        {
+            $from = '';
+        }
+
         // is popen() enabled?
-        if ( ! function_usable( 'popen' ) OR false === ( $fp = @popen( $this->spool->getConfig()->offsetGet( 'mailpath' ) . ' -oi -f ' . $finalMessage[ 'recipients' ] . ' -t',
+        if ( ! function_usable( 'popen' ) OR false === ( $fp = @popen( $this->spool->getConfig()->offsetGet( 'mailpath' ) . ' -oi -f ' . $from . ' -t',
                 'w' ) )
         ) {
             // server probably has popen disabled, so nothing we can do to get a verbose error.
             return false;
         }
 
-        fputs( $fp, $finalMessage[ 'header' ] );
+        fputs( $fp, $finalMessage[ 'headers' ] );
         fputs( $fp, $finalMessage[ 'body' ] );
 
         $status = pclose( $fp );

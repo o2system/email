@@ -34,6 +34,42 @@ class Config extends \O2System\Kernel\Datastructures\Config
             'wordwrap' => false
         ];
 
+        if( isset( $config['protocol'] ) ) {
+            switch ( $config['protocol'] ) {
+                default:
+                case 'mail':
+
+                    break;
+
+                case 'sendmail':
+
+                    // Path to sendmail binary
+                    $defaultConfig['mailPath'] = '/usr/sbin/sendmail';
+
+                    break;
+
+                case 'smtp':
+
+                    // SMTP Host can be an IP Address or domain name
+                    $defaultConfig['host'] = '';
+
+                    // SMTP Port by default it's set to 25
+                    $defaultConfig['port'] = 25;
+
+                    // SMTP Username
+                    $defaultConfig['user'] = '';
+
+                    // SMTP Password
+                    $defaultConfig['pass'] = '';
+
+                    // SMTP Encryption empty, tls or ssl
+                    $defaultConfig['encryption'] = '';
+
+
+                    break;
+            }
+        }
+
         $config = array_merge( $defaultConfig, $config );
 
         parent::__construct( $config );

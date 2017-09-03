@@ -161,7 +161,7 @@ class Message
      *
      * Email body content type (default: text).
      *
-     * @var array
+     * @var string
      */
     protected $contentType = 'text';
 

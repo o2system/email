@@ -73,7 +73,7 @@ class SmtpProtocol extends AbstractProtocol
     {
         parent::__construct( $spool );
 
-        $this->config = $this->spool->getConfig()->offsetGet( 'smtp' );
+        $this->config = $this->spool->getConfig();
 
         if ( ! $this->config->offsetExists( 'timeout' ) ) {
             $this->config[ 'timeout' ] = 5;
