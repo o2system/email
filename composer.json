@@ -31,7 +31,8 @@
   },
   "require": {
     "php": ">=5.6.0",
-    "o2system/kernel": "*"
+    "o2system/kernel": "*",
+    "phpmailer/phpmailer": "*"
   },
   "autoload": {
     "psr-4": {
