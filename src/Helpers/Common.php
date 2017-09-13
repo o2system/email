@@ -47,7 +47,7 @@ if( ! function_exists( 'prepare_q_encoding' ) ) {
                     // iconv_mime_encode() will always put a header field name.
                     // We've passed it an empty one, but it still prepends our
                     // encoded string with ': ', so we need to strip it.
-                    return byte_safe_substr($output, 2);
+                    return mb_substr($output, 2);
                 }
                 $chars = iconv_strlen($string, 'UTF-8');
             }
@@ -57,20 +57,20 @@ if( ! function_exists( 'prepare_q_encoding' ) ) {
             }
         }
         // We might already have this set for UTF-8
-        isset($chars) OR $chars = byte_safe_strlen($string);
+        isset($chars) OR $chars = mb_strlen($string);
         $output = '=?'.$charset.'?Q?';
-        for ($i = 0, $length = byte_safe_strlen($output); $i < $chars; $i++)
+        for ($i = 0, $length = mb_strlen($output); $i < $chars; $i++)
         {
             $character = ($charset === 'UTF-8' && ICONV_ENABLED === TRUE)
                 ? '='.implode('=', str_split(strtoupper(bin2hex(iconv_substr($string, $i, 1, $charset))), 2))
                 : '='.strtoupper(bin2hex($string[$i]));
             // RFC 2045 sets a limit of 76 characters per line.
             // We'll append ?= to the end of each line though.
-            if ($length + ($l = byte_safe_strlen($character)) > 74)
+            if ($length + ($l = mb_strlen($character)) > 74)
             {
                 $output .= '?='.PHP_EOL // EOL
                     .' =?'.$charset.'?Q?'.$character; // New line
-                $length = 6 + byte_safe_strlen($charset) + $l; // Reset the length for the new line
+                $length = 6 + mb_strlen($charset) + $l; // Reset the length for the new line
             }
             else
             {
@@ -131,7 +131,7 @@ if( ! function_exists( 'prepare_quoted_printable' ) ) {
         $output = '';
         foreach (explode("\n", $str) as $line)
         {
-            $length = byte_safe_strlen($line);
+            $length = mb_strlen($line);
             $temp = '';
             // Loop through each character in the line to add soft-wrap
             // characters at the end of a line " =\r\n" and add the newly
@@ -163,7 +163,7 @@ if( ! function_exists( 'prepare_quoted_printable' ) ) {
                 }
                 // If we're at the character limit, add the line to the output,
                 // reset our temp variable, and keep on chuggin'
-                if ((byte_safe_strlen($temp) + byte_safe_strlen($character)) >= 76)
+                if ((mb_strlen($temp) + mb_strlen($character)) >= 76)
                 {
                     $output .= $temp.$escape.$this->crlf;
                     $temp = '';
@@ -172,46 +172,9 @@ if( ! function_exists( 'prepare_quoted_printable' ) ) {
                 $temp .= $character;
             }
             // Add our completed line to the output
-            $output .= $temp.$this->crlf;
+            $output .= $temp.$crlf;
         }
         // get rid of extra CRLF tacked onto the end
-        return byte_safe_substr($output, 0, byte_safe_strlen($this->crlf) * -1);
-    }
-}
-// --------------------------------------------------------------------
-
-if( ! function_exists( 'byte_safe_strlen' ) ) {
-    /**
-     * byte_safe_strlen()
-     *
-     * @param	string	$string
-     * @return	int
-     */
-    function byte_safe_strlen( $string )
-    {
-        return ( ( extension_loaded( 'mbstring' ) && ini_get( 'mbstring.func_overload' ) ) )
-            ? mb_strlen( $string, '8bit' )
-            : strlen( $string );
-    }
-}
-// --------------------------------------------------------------------
-
-if( ! function_exists( 'byte_safe_strlen' ) ) {
-    /**
-     * byte_safe_substr()
-     *
-     * @param    string $string
-     * @param    int $start
-     * @param    int $length
-     * @return    string
-     */
-    function byte_safe_substr( $string, $start, $length = null )
-    {
-        if ( ( extension_loaded( 'mbstring' ) && ini_get( 'mbstring.func_overload' ) ) ) {
-            return mb_substr( $string, $start, $length, '8bit' );
-        }
-        return isset( $length )
-            ? substr( $string, $start, $length )
-            : substr( $string, $start);
+        return mb_substr($output, 0, mb_strlen($crlf) * -1);
     }
 }
