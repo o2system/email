@@ -14,62 +14,74 @@ namespace O2System\Email\Protocols;
 
 // ------------------------------------------------------------------------
 
-use O2System\Email\Abstracts\AbstractProtocol;
 use O2System\Email\Address;
 use O2System\Email\Message;
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Class MailProtocol
  *
  * @package O2System\Email\Protocols
  */
-class MailProtocol extends AbstractProtocol
+class MailProtocol extends Abstracts\AbstractProtocol
 {
-    protected $newLine = "\r\n";
-
     /**
      * MailProtocol::sending
      *
      * Protocol message sending process.
      *
-     * @param array $finalMessage
+     * @param Message $message
      *
      * @return bool
      */
-    protected function sending( $finalMessage )
+    protected function sending( Message $message )
     {
-        $finalMessage[ 'body' ] = $finalMessage[ 'headers' ] . str_repeat( $this->newLine, 2 ) . $finalMessage[ 'body' ];
+        $phpMailer = new PHPMailer();
+        $phpMailer->isMail();
 
-        if ( ini_get( 'safe_mode' ) ) {
-            return mail(
-                $finalMessage[ 'recipients' ],
-                $finalMessage[ 'subject' ],
-                $finalMessage[ 'body' ],
-                $finalMessage[ 'headers' ] );
-        } else {
-
-            // validate email for shell below accepts by reference,
-            // so this needs to be assigned to a variable
-            $from = $this->cleanEmail( $finalMessage[ 'from' ]->getEmail() );
-
-            if ( ! $this->validateEmailForShell( $from ) ) {
-                return mail(
-                    $finalMessage[ 'recipients' ],
-                    $finalMessage[ 'subject' ],
-                    $finalMessage[ 'body' ],
-                    $finalMessage[ 'headers' ]
-                );
-            }
-
-            // most documentation of sendmail using the "-f" flag lacks a space after it, however
-            // we've encountered servers that seem to require it to be in place.
-            return mail(
-                $finalMessage[ 'recipients' ],
-                $finalMessage[ 'subject' ],
-                $finalMessage[ 'body' ],
-                $finalMessage[ 'headers' ],
-                '-f ' . $from
-            );
+        // Set from
+        if( false !== ( $from = $message->getFrom() ) ) {
+            $phpMailer->setFrom( $from->getEmail(), $from->getName() );
         }
+
+        // Set recipient
+        if( false !== ( $to = $message->getTo() ) ) {
+            foreach( $to as $address ) {
+                if ( $address instanceof Address ) {
+                    $phpMailer->addAddress( $address->getEmail(), $address->getName() );
+                }
+            }
+        }
+
+        // Set reply-to
+        if( false !== ( $replyTo = $message->getReplyTo() ) ) {
+            $phpMailer->addReplyTo( $replyTo->getEmail(), $replyTo->getName() );
+        }
+
+        // Set content-type
+        if( $message->getContentType() === 'html' ) {
+            $phpMailer->isHTML( true );
+        }
+
+        // Set subject, body & alt-body
+        $phpMailer->Subject  = $message->getSubject();
+        $phpMailer->Body     = $message->getBody();
+        $phpMailer->AltBody  = $message->getAltBody();
+
+        if ( false !== ( $attachments = $message->getAttachments() ) ) {
+            foreach( $attachments as $filename => $attachment ) {
+                $phpMailer->addAttachment( $attachment, $filename );
+            }
+        }
+
+        if( ! $phpMailer->send() ) {
+            $this->addErrors([
+                $phpMailer->ErrorInfo
+            ]);
+
+            return false;
+        }
+
+        return true;
     }
 }

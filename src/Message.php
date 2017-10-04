@@ -912,15 +912,22 @@ class Message
      *
      * Add mail attachment.
      *
-     * @param mixed $attachment
+     * @param string      $attachment
+     * @param string|null $filename
+     *
+     * @return bool
      */
-    public function addAttachment( $attachment )
+    public function addAttachment( $attachment, $filename = null )
     {
-        if ( $attachment instanceof Attachment ) {
-            $this->attachments[] = new Attachment( $attachment );
-        } elseif ( file_exists( $attachment ) ) {
-            $this->attachments[] = new Attachment( $attachment );
+        if( is_file( $attachment ) ) {
+            $filename = isset( $filename ) ? $filename : pathinfo( $attachment, PATHINFO_BASENAME );
+
+            if( ! in_array( $attachment, $this->attachments ) ) {
+                $this->attachments[ $filename ] = $attachment;
+            }
         }
+
+        return false;
     }
 
     // ------------------------------------------------------------------------

@@ -10,9 +10,6 @@
  */
 // ------------------------------------------------------------------------
 
-// Load Email Helper Manually
-require __DIR__ . DIRECTORY_SEPARATOR . 'Helpers/Common.php';
-
 /**
  * O2System Email Autoload
  *

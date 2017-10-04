@@ -14,7 +14,7 @@ namespace O2System\Email;
 
 // ------------------------------------------------------------------------
 
-use O2System\Email\Abstracts\AbstractProtocol;
+use O2System\Email\Protocols\Abstracts\AbstractProtocol;
 use O2System\Email\Datastructures\Config;
 use O2System\Spl\Traits\Collectors\ErrorCollectorTrait;
 

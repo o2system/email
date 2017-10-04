@@ -14,54 +14,70 @@ namespace O2System\Email\Protocols;
 
 // ------------------------------------------------------------------------
 
-use O2System\Email\Abstracts\AbstractProtocol;
+use O2System\Email\Address;
+use O2System\Email\Message;
+use PHPMailer\PHPMailer\PHPMailer;
 
 /**
  * Class SendMailProtocol
  *
  * @package O2System\Email\Protocols
  */
-class SendmailProtocol extends AbstractProtocol
+class SendmailProtocol extends Abstracts\AbstractProtocol
 {
     /**
-     * SendingMailProtocol::sending
+     * MailProtocol::sending
      *
      * Protocol message sending process.
      *
-     * @param array $finalMessage
+     * @param Message $message
      *
      * @return bool
      */
-    protected function sending( $finalMessage )
+    protected function sending( Message $message )
     {
-        // validate email for shell below accepts by reference,
-        // so this needs to be assigned to a variable
-        $from = $this->cleanEmail( $finalMessage[ 'from' ]->getEmail() );
+        $phpMailer = new PHPMailer();
+        $phpMailer->isSendmail();
 
-        if ($this->validateEmailForShell($from))
-        {
-            $from = '-f '.$from;
-        }
-        else
-        {
-            $from = '';
+        // Set from
+        if( false !== ( $from = $message->getFrom() ) ) {
+            $phpMailer->setFrom( $from->getEmail(), $from->getName() );
         }
 
-        // is popen() enabled?
-        if ( ! function_usable( 'popen' ) OR false === ( $fp = @popen( $this->spool->getConfig()->offsetGet( 'mailpath' ) . ' -oi -f ' . $from . ' -t',
-                'w' ) )
-        ) {
-            // server probably has popen disabled, so nothing we can do to get a verbose error.
-            return false;
+        // Set recipient
+        if( false !== ( $to = $message->getTo() ) ) {
+            foreach( $to as $address ) {
+                if ( $address instanceof Address ) {
+                    $phpMailer->addAddress( $address->getEmail(), $address->getName() );
+                }
+            }
         }
 
-        fputs( $fp, $finalMessage[ 'headers' ] );
-        fputs( $fp, $finalMessage[ 'body' ] );
+        // Set reply-to
+        if( false !== ( $replyTo = $message->getReplyTo() ) ) {
+            $phpMailer->addReplyTo( $replyTo->getEmail(), $replyTo->getName() );
+        }
 
-        $status = pclose( $fp );
+        // Set content-type
+        if( $message->getContentType() === 'html' ) {
+            $phpMailer->isHTML( true );
+        }
 
-        if ( $status !== 0 ) {
-            $this->spool->addError( $status, language()->getLine( 'E_EMAIL_SENDMAIL' ) );
+        // Set subject, body & alt-body
+        $phpMailer->Subject  = $message->getSubject();
+        $phpMailer->Body     = $message->getBody();
+        $phpMailer->AltBody  = $message->getAltBody();
+
+        if ( false !== ( $attachments = $message->getAttachments() ) ) {
+            foreach( $attachments as $filename => $attachment ) {
+                $phpMailer->addAttachment( $attachment, $filename );
+            }
+        }
+
+        if( ! $phpMailer->send() ) {
+            $this->addErrors([
+                $phpMailer->ErrorInfo
+            ]);
 
             return false;
         }

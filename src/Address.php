@@ -102,17 +102,6 @@ class Address
         $name = trim( $name );
 
         if ( $name !== '' ) {
-            // only use Q encoding if there are characters that would require it
-            if ( ! preg_match( '/[\200-\377]/', $name ) )
-            {
-                // add slashes for non-printing characters, slashes, and double quotes, and surround it in double quotes
-                $name = '"' . addcslashes( $name, "\0..\37\177'\"\\" ) . '"';
-            }
-            else
-            {
-                $name = prepare_q_encoding( $name );
-            }
-
             $this->name = $name;
         }
 
