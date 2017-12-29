@@ -23,8 +23,26 @@ use O2System\Spl\Info\SplFileInfo;
  */
 class Attachment extends SplFileInfo
 {
+	/**
+	 * Attachment::$filename
+	 *
+	 * filename of email attachment
+	 * 
+	 * @var string
+	 */
     protected $filename;
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Attachment::setFilename
+     *
+     * Set Filename email attachment
+     * 
+     * @param string $filename
+     *
+     * @return  static
+     */
     public function setFilename( $filename )
     {
         $this->filename = $filename;
