@@ -8,11 +8,14 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Email;
 
 // ------------------------------------------------------------------------
+
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 
 /**
  * Class Message
@@ -240,7 +243,7 @@ class Message
      *
      * @return static
      */
-    public function encoding( $encoding )
+    public function encoding($encoding)
     {
         /**
          * Valid mail encodings
@@ -250,7 +253,7 @@ class Message
             '8bit',
         ];
 
-        in_array( $encoding, $bitDepths ) OR $encoding = '8bit';
+        in_array($encoding, $bitDepths) OR $encoding = '8bit';
 
         $this->encoding = $encoding;
 
@@ -282,7 +285,7 @@ class Message
      *
      * @return static
      */
-    public function charset( $charset )
+    public function charset($charset)
     {
         /**
          * Character sets valid for 7-bit encoding,
@@ -293,9 +296,9 @@ class Message
             'iso-2022-',
         ];
 
-        foreach ( $baseCharsets as $baseCharset ) {
-            if ( strpos( $baseCharset, $charset ) === 0 ) {
-                $this->encoding( '7bit' );
+        foreach ($baseCharsets as $baseCharset) {
+            if (strpos($baseCharset, $charset) === 0) {
+                $this->encoding('7bit');
                 break;
             }
         }
@@ -330,7 +333,7 @@ class Message
      *
      * @return static
      */
-    public function mimeVersion( $mimeVersion )
+    public function mimeVersion($mimeVersion)
     {
         $this->mimeVersion = $mimeVersion;
 
@@ -362,7 +365,7 @@ class Message
      *
      * @return static
      */
-    public function contentType( $contentType )
+    public function contentType($contentType)
     {
 
         $this->contentType = $contentType;
@@ -396,11 +399,11 @@ class Message
      *
      * @return static
      */
-    public function from( $email, $name = null )
+    public function from($email, $name = null)
     {
-        $this->setAddress( $email, $name, 'from' );
+        $this->setAddress($email, $name, 'from');
 
-        if ( empty( $this->replyTo ) ) {
+        if (empty($this->replyTo)) {
             $this->replyTo = $this->from;
         }
 
@@ -418,7 +421,7 @@ class Message
      */
     public function getFrom()
     {
-        if ( $this->from instanceof Address ) {
+        if ($this->from instanceof Address) {
             return $this->from;
         }
 
@@ -437,9 +440,9 @@ class Message
      *
      * @return static
      */
-    public function replyTo( $email, $name = null )
+    public function replyTo($email, $name = null)
     {
-        $this->setAddress( $email, $name, 'replyTo' );
+        $this->setAddress($email, $name, 'replyTo');
 
         return $this;
     }
@@ -455,7 +458,7 @@ class Message
      */
     public function getReplyTo()
     {
-        if ( $this->replyTo instanceof Address ) {
+        if ($this->replyTo instanceof Address) {
             return $this->replyTo;
         }
 
@@ -473,10 +476,10 @@ class Message
      *
      * @return static
      */
-    public function returnPath( $path )
+    public function returnPath($path)
     {
-        if ( strpos( $path, '@' ) !== false ) {
-            $this->returnPath = strstr( $path, '@' );
+        if (strpos($path, '@') !== false) {
+            $this->returnPath = strstr($path, '@');
         } else {
             $this->returnPath = '@' . $path;
         }
@@ -495,9 +498,9 @@ class Message
      */
     public function getReturnPath()
     {
-        if ( empty( $this->returnPath ) ) {
-            if ( $this->from instanceof Address ) {
-                return $this->returnPath = strstr( $this->from->getEmail(), '@' );
+        if (empty($this->returnPath)) {
+            if ($this->from instanceof Address) {
+                return $this->returnPath = strstr($this->from->getEmail(), '@');
             }
 
             return false;
@@ -519,12 +522,12 @@ class Message
      *
      * @return void
      */
-    protected function setAddress( $email, $name = null, $object )
+    protected function setAddress($email, $name = null, $object)
     {
-        if ( $email instanceof Address ) {
+        if ($email instanceof Address) {
             $this->{$object} = $email;
         } else {
-            $this->{$object} = new Address( $email, $name );
+            $this->{$object} = new Address($email, $name);
         }
     }
 
@@ -539,9 +542,9 @@ class Message
      *
      * @return static
      */
-    public function subject( $subject )
+    public function subject($subject)
     {
-        $this->subject = trim( $subject );
+        $this->subject = trim($subject);
 
         return $this;
     }
@@ -571,9 +574,9 @@ class Message
      *
      * @return static
      */
-    public function body( $body )
+    public function body($body)
     {
-        $this->body = rtrim( str_replace( "\r", '', $body ) );
+        $this->body = rtrim(str_replace("\r", '', $body));
 
         /* strip slashes only if magic quotes is ON
            if we do it with magic quotes OFF, it strips real, user-inputted chars.
@@ -581,9 +584,16 @@ class Message
            NOTE: In PHP 5.4 get_magic_quotes_gpc() will always return 0 and
              it will probably not exist in future versions at all.
         */
-        if ( ! is_php( '5.4' ) && get_magic_quotes_gpc() ) {
-            $this->body = stripslashes( $this->body );
+        if ( ! is_php('5.4') && get_magic_quotes_gpc()) {
+            $this->body = stripslashes($this->body);
         }
+
+        if(class_exists('O2System\Framework', false)) {
+            $this->body = presenter()->assets->parseSourceCode($this->body);
+        }
+
+        $cssToInlineStyles = new CssToInlineStyles();
+        $this->body = $cssToInlineStyles->convert($this->body);
 
         return $this;
     }
@@ -613,9 +623,9 @@ class Message
      *
      * @return static
      */
-    public function altBody( $altBody )
+    public function altBody($altBody)
     {
-        $this->altBody = trim( $altBody );
+        $this->altBody = trim($altBody);
 
         return $this;
     }
@@ -631,16 +641,16 @@ class Message
      */
     public function getAltBody()
     {
-        if ( is_html( $this->body ) ) {
-            $body = preg_match( '/\<body.*?\>(.*)\<\/body\>/si', $this->body, $match ) ? $match[ 1 ] : $this->body;
-            $body = str_replace( "\t", '', preg_replace( '#<!--(.*)--\>#', '', trim( strip_tags( $body ) ) ) );
+        if (is_html($this->body)) {
+            $body = preg_match('/\<body.*?\>(.*)\<\/body\>/si', $this->body, $match) ? $match[ 1 ] : $this->body;
+            $body = str_replace("\t", '', preg_replace('#<!--(.*)--\>#', '', trim(strip_tags($body))));
 
-            for ( $i = 20; $i >= 3; $i-- ) {
-                $body = str_replace( str_repeat( "\n", $i ), "\n\n", $body );
+            for ($i = 20; $i >= 3; $i--) {
+                $body = str_replace(str_repeat("\n", $i), "\n\n", $body);
             }
 
             // Reduce multiple spaces
-            $body = preg_replace( '| +|', ' ', $body );
+            $body = preg_replace('| +|', ' ', $body);
 
             return $this->body;
         }
@@ -657,7 +667,7 @@ class Message
      *
      * @param int $priority
      */
-    public function priority( $priority )
+    public function priority($priority)
     {
         $priorities = [
             1 => '1 (Highest)',
@@ -667,7 +677,7 @@ class Message
             5 => '5 (Lowest)',
         ];
 
-        if ( array_key_exists( $priority, $priorities ) ) {
+        if (array_key_exists($priority, $priorities)) {
             $this->priority = $priorities[ $priority ];
         }
     }
@@ -683,7 +693,7 @@ class Message
      */
     public function getPriority()
     {
-        if ( ! empty( $this->priority ) ) {
+        if ( ! empty($this->priority)) {
             return $this->priority;
         }
 
@@ -702,7 +712,7 @@ class Message
      *
      * @return static
      */
-    public function addHeader( $name, $value )
+    public function addHeader($name, $value)
     {
         $this->headers[ $name ] = $value;
 
@@ -733,9 +743,9 @@ class Message
      * @param string $email
      * @param string $name
      */
-    public function to( $email, $name = null )
+    public function to($email, $name = null)
     {
-        $this->addAddress( $email, $name, 'to' );
+        $this->addAddress($email, $name, 'to');
 
         return $this;
     }
@@ -751,7 +761,7 @@ class Message
      */
     public function getTo()
     {
-        if ( count( $this->to ) ) {
+        if (count($this->to)) {
             return $this->to;
         }
 
@@ -768,9 +778,9 @@ class Message
      * @param string $email
      * @param string $name
      */
-    public function cc( $email, $name = null )
+    public function cc($email, $name = null)
     {
-        $this->addAddress( $email, $name, 'cc' );
+        $this->addAddress($email, $name, 'cc');
 
         return $this;
     }
@@ -786,7 +796,7 @@ class Message
      */
     public function getCc()
     {
-        if ( count( $this->cc ) ) {
+        if (count($this->cc)) {
             return $this->cc;
         }
 
@@ -803,10 +813,10 @@ class Message
      * @param string $email
      * @param string $name
      */
-    public function bcc( $email, $name = null, $limit = 100 )
+    public function bcc($email, $name = null, $limit = 100)
     {
         $this->batchLimit = (int)$limit;
-        $this->addAddress( $email, $name, 'bcc' );
+        $this->addAddress($email, $name, 'bcc');
 
         return $this;
     }
@@ -822,7 +832,7 @@ class Message
      */
     public function getBcc()
     {
-        if ( count( $this->bcc ) ) {
+        if (count($this->bcc)) {
             return $this->bcc;
         }
 
@@ -839,10 +849,10 @@ class Message
      * @param array $email
      * @param int   $limit
      */
-    public function subscribers( $email, $limit = 100 )
+    public function subscribers($email, $limit = 100)
     {
         $this->batchLimit = (int)$limit;
-        $this->addAddress( $email, null, 'subscribers' );
+        $this->addAddress($email, null, 'subscribers');
 
         return $this;
     }
@@ -858,7 +868,7 @@ class Message
      */
     public function getSubscribers()
     {
-        if ( count( $this->subscribers ) ) {
+        if (count($this->subscribers)) {
             return $this->subscribers;
         }
 
@@ -878,30 +888,30 @@ class Message
      *
      * @return void
      */
-    protected function addAddress( $email, $name = null, $object )
+    protected function addAddress($email, $name = null, $object)
     {
-        if ( $email instanceof Address ) {
+        if ($email instanceof Address) {
             $this->{$object}[] = $email;
-        } elseif ( is_array( $email ) ) {
+        } elseif (is_array($email)) {
 
-            if ( is_numeric( key( $email ) ) ) {
-                foreach ( $email as $address ) {
-                    $this->{$object}[] = new Address( $address );
+            if (is_numeric(key($email))) {
+                foreach ($email as $address) {
+                    $this->{$object}[] = new Address($address);
                 }
             } else {
-                foreach ( $email as $name => $address ) {
-                    $this->{$object}[] = new Address( $address, $name );
+                foreach ($email as $name => $address) {
+                    $this->{$object}[] = new Address($address, $name);
                 }
             }
 
-        } elseif ( strpos( $email, ',' ) !== false ) {
-            $emails = preg_split( '/[\s,]/', $email, -1, PREG_SPLIT_NO_EMPTY );
+        } elseif (strpos($email, ',') !== false) {
+            $emails = preg_split('/[\s,]/', $email, -1, PREG_SPLIT_NO_EMPTY);
 
-            foreach ( $emails as $email ) {
-                $this->{$object}[] = new Address( $email );
+            foreach ($emails as $email) {
+                $this->{$object}[] = new Address($email);
             }
         } else {
-            $this->{$object}[] = new Address( $email, $name );
+            $this->{$object}[] = new Address($email, $name);
         }
     }
 
@@ -917,12 +927,12 @@ class Message
      *
      * @return bool
      */
-    public function addAttachment( $attachment, $filename = null )
+    public function addAttachment($attachment, $filename = null)
     {
-        if( is_file( $attachment ) ) {
-            $filename = isset( $filename ) ? $filename : pathinfo( $attachment, PATHINFO_BASENAME );
+        if (is_file($attachment)) {
+            $filename = isset($filename) ? $filename : pathinfo($attachment, PATHINFO_BASENAME);
 
-            if( ! in_array( $attachment, $this->attachments ) ) {
+            if ( ! in_array($attachment, $this->attachments)) {
                 $this->attachments[ $filename ] = $attachment;
             }
         }
@@ -941,7 +951,7 @@ class Message
      */
     public function getAttachments()
     {
-        if ( count( $this->attachments ) ) {
+        if (count($this->attachments)) {
             return $this->attachments;
         }
 

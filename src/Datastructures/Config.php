@@ -65,7 +65,6 @@ class Config extends \O2System\Kernel\Datastructures\Config
                     // SMTP Encryption empty, tls or ssl
                     $defaultConfig['encryption'] = '';
 
-
                     break;
             }
         }
