@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Email\Protocols;
@@ -34,49 +35,49 @@ class SendmailProtocol extends Abstracts\AbstractProtocol
      *
      * @return bool
      */
-    protected function sending( Message $message )
+    protected function sending(Message $message)
     {
         $phpMailer = new PHPMailer();
         $phpMailer->isSendmail();
 
         // Set from
-        if( false !== ( $from = $message->getFrom() ) ) {
-            $phpMailer->setFrom( $from->getEmail(), $from->getName() );
+        if (false !== ($from = $message->getFrom())) {
+            $phpMailer->setFrom($from->getEmail(), $from->getName());
         }
 
         // Set recipient
-        if( false !== ( $to = $message->getTo() ) ) {
-            foreach( $to as $address ) {
-                if ( $address instanceof Address ) {
-                    $phpMailer->addAddress( $address->getEmail(), $address->getName() );
+        if (false !== ($to = $message->getTo())) {
+            foreach ($to as $address) {
+                if ($address instanceof Address) {
+                    $phpMailer->addAddress($address->getEmail(), $address->getName());
                 }
             }
         }
 
         // Set reply-to
-        if( false !== ( $replyTo = $message->getReplyTo() ) ) {
-            $phpMailer->addReplyTo( $replyTo->getEmail(), $replyTo->getName() );
+        if (false !== ($replyTo = $message->getReplyTo())) {
+            $phpMailer->addReplyTo($replyTo->getEmail(), $replyTo->getName());
         }
 
         // Set content-type
-        if( $message->getContentType() === 'html' ) {
-            $phpMailer->isHTML( true );
+        if ($message->getContentType() === 'html') {
+            $phpMailer->isHTML(true);
         }
 
         // Set subject, body & alt-body
-        $phpMailer->Subject  = $message->getSubject();
-        $phpMailer->Body     = $message->getBody();
-        $phpMailer->AltBody  = $message->getAltBody();
+        $phpMailer->Subject = $message->getSubject();
+        $phpMailer->Body = $message->getBody();
+        $phpMailer->AltBody = $message->getAltBody();
 
-        if ( false !== ( $attachments = $message->getAttachments() ) ) {
-            foreach( $attachments as $filename => $attachment ) {
-                $phpMailer->addAttachment( $attachment, $filename );
+        if (false !== ($attachments = $message->getAttachments())) {
+            foreach ($attachments as $filename => $attachment) {
+                $phpMailer->addAttachment($attachment, $filename);
             }
         }
 
-        if( ! $phpMailer->send() ) {
+        if ( ! $phpMailer->send()) {
             $this->addErrors([
-                $phpMailer->ErrorInfo
+                $phpMailer->ErrorInfo,
             ]);
 
             return false;

@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Email;
@@ -47,65 +48,35 @@ class Address
      * @param string      $email
      * @param string|null $name
      */
-    public function __construct( $email = null, $name = null )
+    public function __construct($email = null, $name = null)
     {
-        if ( isset( $email ) ) {
-            $this->setEmail( $email );
+        if (isset($email)) {
+            $this->setEmail($email);
         }
 
-        if ( isset( $name ) ) {
-            $this->setName( $name );
+        if (isset($name)) {
+            $this->setName($name);
         }
     }
 
     // ------------------------------------------------------------------------
 
     /**
-     * Address::setEmail
-     *
-     * @param string $email
-     *
-     * @return static
+     * Address::__toString
      */
-    public function setEmail( $email )
+    public function __toString()
     {
-        $email = trim( $email );
+        $string = '';
 
-        if ( preg_match( '/\<(.*)\>/', $email, $matches ) )
-        {
-            $email = trim( str_replace( $matches[ 0 ], '', $email ) );
-            $name = $matches[ 1 ];
+        if (false !== ($email = $this->getEmail())) {
+            $string = $email;
         }
 
-        if ( filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
-            $this->email = $email;
-
-            if( isset( $name ) ) {
-                $this->setName( $name );
-            }
+        if (false !== ($name = $this->getName())) {
+            $string .= ' <' . $name . '>';
         }
 
-        return $this;
-    }
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * Address::setName
-     *
-     * @param string $name
-     *
-     * @return static
-     */
-    public function setName( $name )
-    {
-        $name = trim( $name );
-
-        if ( $name !== '' ) {
-            $this->name = $name;
-        }
-
-        return $this;
+        return $string;
     }
 
     // ------------------------------------------------------------------------
@@ -119,11 +90,40 @@ class Address
      */
     public function getEmail()
     {
-        if ( empty( $this->email ) ) {
+        if (empty($this->email)) {
             return false;
         }
 
         return $this->email;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Address::setEmail
+     *
+     * @param string $email
+     *
+     * @return static
+     */
+    public function setEmail($email)
+    {
+        $email = trim($email);
+
+        if (preg_match('/\<(.*)\>/', $email, $matches)) {
+            $email = trim(str_replace($matches[ 0 ], '', $email));
+            $name = $matches[ 1 ];
+        }
+
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->email = $email;
+
+            if (isset($name)) {
+                $this->setName($name);
+            }
+        }
+
+        return $this;
     }
 
     // ------------------------------------------------------------------------
@@ -137,7 +137,7 @@ class Address
      */
     public function getName()
     {
-        if ( empty( $this->name ) ) {
+        if (empty($this->name)) {
             return false;
         }
 
@@ -147,20 +147,20 @@ class Address
     // ------------------------------------------------------------------------
 
     /**
-     * Address::__toString
+     * Address::setName
+     *
+     * @param string $name
+     *
+     * @return static
      */
-    public function __toString()
+    public function setName($name)
     {
-        $string = '';
+        $name = trim($name);
 
-        if( false !== ( $email = $this->getEmail() ) ) {
-            $string = $email;
+        if ($name !== '') {
+            $this->name = $name;
         }
 
-        if( false !== ( $name = $this->getName() ) ) {
-            $string.= ' <' . $name . '>';
-        }
-
-        return $string;
+        return $this;
     }
 }

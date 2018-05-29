@@ -8,14 +8,15 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Email;
 
 // ------------------------------------------------------------------------
 
-use O2System\Email\Protocols\Abstracts\AbstractProtocol;
 use O2System\Email\Datastructures\Config;
+use O2System\Email\Protocols\Abstracts\AbstractProtocol;
 use O2System\Spl\Traits\Collectors\ErrorCollectorTrait;
 
 /**
@@ -52,31 +53,13 @@ class Spool
      *
      * @param Config|null $config
      */
-    public function __construct( Config $config = null )
+    public function __construct(Config $config = null)
     {
-        if( empty( $config ) ) {
+        if (empty($config)) {
             $config = new Config();
         }
 
-        $this->setConfig( $config );
-    }
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * Spool::setConfig
-     *
-     * Sets spool config.
-     *
-     * @param Config $config
-     *
-     * @return static
-     */
-    public function setConfig( Config $config )
-    {
-        $this->config = $config;
-
-        return $this;
+        $this->setConfig($config);
     }
 
     // ------------------------------------------------------------------------
@@ -96,13 +79,31 @@ class Spool
     // ------------------------------------------------------------------------
 
     /**
+     * Spool::setConfig
+     *
+     * Sets spool config.
+     *
+     * @param Config $config
+     *
+     * @return static
+     */
+    public function setConfig(Config $config)
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
      * Spool::addLog
      *
      * Add spool log.
      *
      * @param $log
      */
-    public function addLog( $log )
+    public function addLog($log)
     {
         $this->log[] = $log;
     }
@@ -130,15 +131,15 @@ class Spool
      *
      * @return bool
      */
-    public function send( Message $message )
+    public function send(Message $message)
     {
-        $protocolClass = '\O2System\Email\Protocols\\' . ucfirst( $this->config->offsetGet('protocol') ) . 'Protocol';
+        $protocolClass = '\O2System\Email\Protocols\\' . ucfirst($this->config->offsetGet('protocol')) . 'Protocol';
 
-        if( class_exists( $protocolClass ) ) {
-            $protocol = new $protocolClass( $this );
+        if (class_exists($protocolClass)) {
+            $protocol = new $protocolClass($this);
 
-            if( $protocol instanceof AbstractProtocol ) {
-                return $protocol->send( $message );
+            if ($protocol instanceof AbstractProtocol) {
+                return $protocol->send($message);
             }
         }
 

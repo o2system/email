@@ -25,159 +25,6 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 class Message
 {
     /**
-     * Message::$from
-     *
-     * Email from.
-     *
-     * @var Address
-     */
-    protected $from;
-
-    /**
-     * Message::$replyTo
-     *
-     * Email reply-to.
-     *
-     * @var Address
-     */
-    protected $replyTo;
-
-    /**
-     * Message::$returnTo
-     *
-     * Email return path.
-     *
-     * @var string
-     */
-    protected $returnPath;
-
-    /**
-     * Message::$to
-     *
-     * Email to Receiver, or receivers of the mail.
-     *
-     * @var array
-     */
-    protected $to = [];
-
-    /**
-     * Message::$cc
-     *
-     * Email copy carbon of Receiver, or receivers of the mail.
-     *
-     * @var array
-     */
-    protected $cc = [];
-
-    /**
-     * Message::$bcc
-     *
-     * Email blank copy carbon of Receiver, or receivers of the mail.
-     *
-     * @var array
-     */
-    protected $bcc = [];
-
-    /**
-     * Message::$subscribers
-     *
-     * Email subscribers.
-     *
-     * @var array
-     */
-    protected $subscribers = [];
-
-    /**
-     * Message::$subject
-     *
-     * Subject of the email to be sent.
-     *
-     * @var string
-     */
-    protected $subject;
-
-    /**
-     * Message::$body
-     *
-     * Email message body to be sent.
-     *
-     * @var string
-     */
-    protected $body;
-
-    /**
-     * Message::$altBody
-     *
-     * Email message alternative body to be sent.
-     *
-     * @var string
-     */
-    protected $altBody;
-
-    /**
-     * Message::$headers
-     *
-     * Headers of the message to be sent.
-     *
-     * @var array
-     */
-    protected $headers = [];
-
-    /**
-     * Message::$attachments
-     *
-     * Email attachments.
-     *
-     * @var array
-     */
-    protected $attachments = [];
-
-    /**
-     * Message::$encoding
-     *
-     * Message encoding.
-     *
-     * @var string
-     */
-    protected $encoding = '8bit';
-
-    /**
-     * Message::$charset
-     *
-     * Character set (default: utf-8)
-     *
-     * @var string
-     */
-    protected $charset = 'utf-8';
-
-    /**
-     * Message::$mimeVersion
-     *
-     * Message mime version (default: 1.0).
-     *
-     * @var string
-     */
-    protected $mimeVersion = '1.0';
-
-    /**
-     * Message::$contentType
-     *
-     * Email body content type (default: text).
-     *
-     * @var string
-     */
-    protected $contentType = 'text';
-
-    /**
-     * Message::$priority
-     *
-     * Email priority
-     *
-     * @var string
-     */
-    protected $priority;
-
-    /**
      * Message::PRIORITY_HIGHEST
      *
      * Highest message priority.
@@ -185,7 +32,6 @@ class Message
      * @var int
      */
     const PRIORITY_HIGHEST = 1;
-
     /**
      * Message::PRIORITY_HIGH
      *
@@ -194,7 +40,6 @@ class Message
      * @var int
      */
     const PRIORITY_HIGH = 2;
-
     /**
      * Message::PRIORITY_NORMAL
      *
@@ -203,7 +48,6 @@ class Message
      * @var int
      */
     const PRIORITY_NORMAL = 3;
-
     /**
      * Message::PRIORITY_HIGHEST
      *
@@ -212,7 +56,6 @@ class Message
      * @var int
      */
     const PRIORITY_LOW = 4;
-
     /**
      * Message::PRIORITY_LOWEST
      *
@@ -221,7 +64,142 @@ class Message
      * @var int
      */
     const PRIORITY_LOWEST = 5;
-
+    /**
+     * Message::$from
+     *
+     * Email from.
+     *
+     * @var Address
+     */
+    protected $from;
+    /**
+     * Message::$replyTo
+     *
+     * Email reply-to.
+     *
+     * @var Address
+     */
+    protected $replyTo;
+    /**
+     * Message::$returnTo
+     *
+     * Email return path.
+     *
+     * @var string
+     */
+    protected $returnPath;
+    /**
+     * Message::$to
+     *
+     * Email to Receiver, or receivers of the mail.
+     *
+     * @var array
+     */
+    protected $to = [];
+    /**
+     * Message::$cc
+     *
+     * Email copy carbon of Receiver, or receivers of the mail.
+     *
+     * @var array
+     */
+    protected $cc = [];
+    /**
+     * Message::$bcc
+     *
+     * Email blank copy carbon of Receiver, or receivers of the mail.
+     *
+     * @var array
+     */
+    protected $bcc = [];
+    /**
+     * Message::$subscribers
+     *
+     * Email subscribers.
+     *
+     * @var array
+     */
+    protected $subscribers = [];
+    /**
+     * Message::$subject
+     *
+     * Subject of the email to be sent.
+     *
+     * @var string
+     */
+    protected $subject;
+    /**
+     * Message::$body
+     *
+     * Email message body to be sent.
+     *
+     * @var string
+     */
+    protected $body;
+    /**
+     * Message::$altBody
+     *
+     * Email message alternative body to be sent.
+     *
+     * @var string
+     */
+    protected $altBody;
+    /**
+     * Message::$headers
+     *
+     * Headers of the message to be sent.
+     *
+     * @var array
+     */
+    protected $headers = [];
+    /**
+     * Message::$attachments
+     *
+     * Email attachments.
+     *
+     * @var array
+     */
+    protected $attachments = [];
+    /**
+     * Message::$encoding
+     *
+     * Message encoding.
+     *
+     * @var string
+     */
+    protected $encoding = '8bit';
+    /**
+     * Message::$charset
+     *
+     * Character set (default: utf-8)
+     *
+     * @var string
+     */
+    protected $charset = 'utf-8';
+    /**
+     * Message::$mimeVersion
+     *
+     * Message mime version (default: 1.0).
+     *
+     * @var string
+     */
+    protected $mimeVersion = '1.0';
+    /**
+     * Message::$contentType
+     *
+     * Email body content type (default: text).
+     *
+     * @var string
+     */
+    protected $contentType = 'text';
+    /**
+     * Message::$priority
+     *
+     * Email priority
+     *
+     * @var string
+     */
+    protected $priority;
     /**
      * Message::$batchLimit
      *
@@ -231,34 +209,6 @@ class Message
      */
     protected $batchLimit = 100;
 
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * Message::encoding
-     *
-     * Sets message encoding.
-     *
-     * @param string $encoding
-     *
-     * @return static
-     */
-    public function encoding($encoding)
-    {
-        /**
-         * Valid mail encodings
-         */
-        $bitDepths = [
-            '7bit',
-            '8bit',
-        ];
-
-        in_array($encoding, $bitDepths) OR $encoding = '8bit';
-
-        $this->encoding = $encoding;
-
-        return $this;
-    }
 
     // ------------------------------------------------------------------------
 
@@ -304,6 +254,34 @@ class Message
         }
 
         $this->charset = $charset;
+
+        return $this;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Message::encoding
+     *
+     * Sets message encoding.
+     *
+     * @param string $encoding
+     *
+     * @return static
+     */
+    public function encoding($encoding)
+    {
+        /**
+         * Valid mail encodings
+         */
+        $bitDepths = [
+            '7bit',
+            '8bit',
+        ];
+
+        in_array($encoding, $bitDepths) OR $encoding = '8bit';
+
+        $this->encoding = $encoding;
 
         return $this;
     }
@@ -413,6 +391,28 @@ class Message
     // ------------------------------------------------------------------------
 
     /**
+     * Message::setFrom
+     *
+     * Sets mail from.
+     *
+     * @param string $email
+     * @param string $name
+     * @param string $object from | replyTo
+     *
+     * @return void
+     */
+    protected function setAddress($email, $name = null, $object)
+    {
+        if ($email instanceof Address) {
+            $this->{$object} = $email;
+        } else {
+            $this->{$object} = new Address($email, $name);
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
      * Message::getFrom
      *
      * Gets from mail address.
@@ -512,28 +512,6 @@ class Message
     // ------------------------------------------------------------------------
 
     /**
-     * Message::setFrom
-     *
-     * Sets mail from.
-     *
-     * @param string $email
-     * @param string $name
-     * @param string $object from | replyTo
-     *
-     * @return void
-     */
-    protected function setAddress($email, $name = null, $object)
-    {
-        if ($email instanceof Address) {
-            $this->{$object} = $email;
-        } else {
-            $this->{$object} = new Address($email, $name);
-        }
-    }
-
-    // ------------------------------------------------------------------------
-
-    /**
      * Message::subject
      *
      * Sets mail subject.
@@ -588,7 +566,7 @@ class Message
             $this->body = stripslashes($this->body);
         }
 
-        if(class_exists('O2System\Framework', false)) {
+        if (class_exists('O2System\Framework', false)) {
             $this->body = presenter()->assets->parseSourceCode($this->body);
         }
 
@@ -753,6 +731,46 @@ class Message
     // ------------------------------------------------------------------------
 
     /**
+     * Message::addAddress
+     *
+     * Add mail address to object.
+     *
+     * @param string $email
+     * @param string $name
+     * @param string $object
+     *
+     * @return void
+     */
+    protected function addAddress($email, $name = null, $object)
+    {
+        if ($email instanceof Address) {
+            $this->{$object}[] = $email;
+        } elseif (is_array($email)) {
+
+            if (is_numeric(key($email))) {
+                foreach ($email as $address) {
+                    $this->{$object}[] = new Address($address);
+                }
+            } else {
+                foreach ($email as $name => $address) {
+                    $this->{$object}[] = new Address($address, $name);
+                }
+            }
+
+        } elseif (strpos($email, ',') !== false) {
+            $emails = preg_split('/[\s,]/', $email, -1, PREG_SPLIT_NO_EMPTY);
+
+            foreach ($emails as $email) {
+                $this->{$object}[] = new Address($email);
+            }
+        } else {
+            $this->{$object}[] = new Address($email, $name);
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
      * Message::getTo
      *
      * Gets mail to addresses.
@@ -873,46 +891,6 @@ class Message
         }
 
         return false;
-    }
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * Message::addAddress
-     *
-     * Add mail address to object.
-     *
-     * @param string $email
-     * @param string $name
-     * @param string $object
-     *
-     * @return void
-     */
-    protected function addAddress($email, $name = null, $object)
-    {
-        if ($email instanceof Address) {
-            $this->{$object}[] = $email;
-        } elseif (is_array($email)) {
-
-            if (is_numeric(key($email))) {
-                foreach ($email as $address) {
-                    $this->{$object}[] = new Address($address);
-                }
-            } else {
-                foreach ($email as $name => $address) {
-                    $this->{$object}[] = new Address($address, $name);
-                }
-            }
-
-        } elseif (strpos($email, ',') !== false) {
-            $emails = preg_split('/[\s,]/', $email, -1, PREG_SPLIT_NO_EMPTY);
-
-            foreach ($emails as $email) {
-                $this->{$object}[] = new Address($email);
-            }
-        } else {
-            $this->{$object}[] = new Address($email, $name);
-        }
     }
 
     // ------------------------------------------------------------------------

@@ -8,13 +8,13 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Email\Protocols\Abstracts;
 
 // ------------------------------------------------------------------------
 
-use O2System\Email\Address;
 use O2System\Email\Message;
 use O2System\Email\Spool;
 use O2System\Spl\Traits\Collectors\ErrorCollectorTrait;
@@ -49,7 +49,7 @@ abstract class AbstractProtocol
      *
      * @param \O2System\Email\Spool $spool
      */
-    public function __construct( Spool $spool )
+    public function __construct(Spool $spool)
     {
         $this->spool = $spool;
     }
@@ -63,9 +63,9 @@ abstract class AbstractProtocol
      *
      * @return bool
      */
-    public function send( Message $message )
+    public function send(Message $message)
     {
-        return $this->sending( $message );
+        return $this->sending($message);
     }
 
     // ------------------------------------------------------------------------
@@ -79,5 +79,5 @@ abstract class AbstractProtocol
      *
      * @return bool
      */
-    abstract protected function sending( Message $message );
+    abstract protected function sending(Message $message);
 }

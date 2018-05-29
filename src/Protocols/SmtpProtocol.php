@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Email\Protocols;
@@ -38,13 +39,13 @@ class SmtpProtocol extends Abstracts\AbstractProtocol
      *
      * @param \O2System\Email\Spool $spool
      */
-    public function __construct( Spool $spool )
+    public function __construct(Spool $spool)
     {
-        parent::__construct( $spool );
+        parent::__construct($spool);
 
         $this->config = $this->spool->getConfig();
 
-        if ( ! $this->config->offsetExists( 'debug' ) ) {
+        if ( ! $this->config->offsetExists('debug')) {
             /**
              * Debug output level.
              * Options:
@@ -57,9 +58,9 @@ class SmtpProtocol extends Abstracts\AbstractProtocol
             $this->config[ 'debug' ] = 0;
         }
 
-        if ( ! $this->config->offsetExists( 'auth' ) ) {
+        if ( ! $this->config->offsetExists('auth')) {
             $this->config[ 'auth' ] = false;
-            if( ! empty( $this->config[ 'username' ] ) ) {
+            if ( ! empty($this->config[ 'username' ])) {
                 $this->config[ 'auth' ] = true;
             }
         }
@@ -76,7 +77,7 @@ class SmtpProtocol extends Abstracts\AbstractProtocol
      *
      * @return bool
      */
-    protected function sending( Message $message )
+    protected function sending(Message $message)
     {
         $phpMailer = new PHPMailer();
         $phpMailer->isSMTP();
@@ -84,8 +85,8 @@ class SmtpProtocol extends Abstracts\AbstractProtocol
 
         $host = $this->config[ 'host' ];
 
-        if( is_array( $this->config[ 'host' ] ) ) {
-            $host = implode(';', $this->config[ 'host' ] );
+        if (is_array($this->config[ 'host' ])) {
+            $host = implode(';', $this->config[ 'host' ]);
         }
 
         $phpMailer->Host = $host;
@@ -96,42 +97,42 @@ class SmtpProtocol extends Abstracts\AbstractProtocol
         $phpMailer->Port = $this->config[ 'port' ];
 
         // Set from
-        if( false !== ( $from = $message->getFrom() ) ) {
-            $phpMailer->setFrom( $from->getEmail(), $from->getName() );
+        if (false !== ($from = $message->getFrom())) {
+            $phpMailer->setFrom($from->getEmail(), $from->getName());
         }
 
         // Set recipient
-        if( false !== ( $to = $message->getTo() ) ) {
-            foreach( $to as $address ) {
-                if ( $address instanceof Address ) {
-                    $phpMailer->addAddress( $address->getEmail(), $address->getName() );
+        if (false !== ($to = $message->getTo())) {
+            foreach ($to as $address) {
+                if ($address instanceof Address) {
+                    $phpMailer->addAddress($address->getEmail(), $address->getName());
                 }
             }
         }
 
         // Set reply-to
-        if( false !== ( $replyTo = $message->getReplyTo() ) ) {
-            $phpMailer->addReplyTo( $replyTo->getEmail(), $replyTo->getName() );
+        if (false !== ($replyTo = $message->getReplyTo())) {
+            $phpMailer->addReplyTo($replyTo->getEmail(), $replyTo->getName());
         }
 
         // Set content-type
-        if( $message->getContentType() === 'html' ) {
-            $phpMailer->isHTML( true );
+        if ($message->getContentType() === 'html') {
+            $phpMailer->isHTML(true);
         }
 
         // Set subject, body & alt-body
-        $phpMailer->Subject  = $message->getSubject();
-        $phpMailer->Body     = $message->getBody();
-        $phpMailer->AltBody  = $message->getAltBody();
+        $phpMailer->Subject = $message->getSubject();
+        $phpMailer->Body = $message->getBody();
+        $phpMailer->AltBody = $message->getAltBody();
 
-        if ( false !== ( $attachments = $message->getAttachments() ) ) {
-            foreach( $attachments as $filename => $attachment ) {
-                $phpMailer->addAttachment( $attachment, $filename );
+        if (false !== ($attachments = $message->getAttachments())) {
+            foreach ($attachments as $filename => $attachment) {
+                $phpMailer->addAttachment($attachment, $filename);
             }
         }
 
-        if( ! $phpMailer->send() ) {
-            $this->addError( 100, $phpMailer->ErrorInfo );
+        if ( ! $phpMailer->send()) {
+            $this->addError(100, $phpMailer->ErrorInfo);
 
             return false;
         }

@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Email\Datastructures;
@@ -26,16 +27,16 @@ class Config extends \O2System\Kernel\Datastructures\Config
      *
      * @param array $config
      */
-    public function __construct( array $config = [] )
+    public function __construct(array $config = [])
     {
         $defaultConfig = [
-            'protocol' => 'mail',
+            'protocol'  => 'mail',
             'userAgent' => 'O2System\Email',
-            'wordwrap' => false
+            'wordwrap'  => false,
         ];
 
-        if( isset( $config['protocol'] ) ) {
-            switch ( $config['protocol'] ) {
+        if (isset($config[ 'protocol' ])) {
+            switch ($config[ 'protocol' ]) {
                 default:
                 case 'mail':
 
@@ -44,33 +45,33 @@ class Config extends \O2System\Kernel\Datastructures\Config
                 case 'sendmail':
 
                     // Path to sendmail binary
-                    $defaultConfig['mailPath'] = '/usr/sbin/sendmail';
+                    $defaultConfig[ 'mailPath' ] = '/usr/sbin/sendmail';
 
                     break;
 
                 case 'smtp':
 
                     // SMTP Host can be an IP Address or domain name
-                    $defaultConfig['host'] = '';
+                    $defaultConfig[ 'host' ] = '';
 
                     // SMTP Port by default it's set to 25
-                    $defaultConfig['port'] = 25;
+                    $defaultConfig[ 'port' ] = 25;
 
                     // SMTP Username
-                    $defaultConfig['user'] = '';
+                    $defaultConfig[ 'user' ] = '';
 
                     // SMTP Password
-                    $defaultConfig['pass'] = '';
+                    $defaultConfig[ 'pass' ] = '';
 
                     // SMTP Encryption empty, tls or ssl
-                    $defaultConfig['encryption'] = '';
+                    $defaultConfig[ 'encryption' ] = '';
 
                     break;
             }
         }
 
-        $config = array_merge( $defaultConfig, $config );
+        $config = array_merge($defaultConfig, $config);
 
-        parent::__construct( $config );
+        parent::__construct($config);
     }
 }

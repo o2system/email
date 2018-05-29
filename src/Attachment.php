@@ -8,6 +8,7 @@
  * @author         Steeve Andrian Salim
  * @copyright      Copyright (c) Steeve Andrian Salim
  */
+
 // ------------------------------------------------------------------------
 
 namespace O2System\Email;
@@ -23,13 +24,13 @@ use O2System\Spl\Info\SplFileInfo;
  */
 class Attachment extends SplFileInfo
 {
-	/**
-	 * Attachment::$filename
-	 *
-	 * filename of email attachment
-	 * 
-	 * @var string
-	 */
+    /**
+     * Attachment::$filename
+     *
+     * filename of email attachment
+     *
+     * @var string
+     */
     protected $filename;
 
     // ------------------------------------------------------------------------
@@ -38,12 +39,12 @@ class Attachment extends SplFileInfo
      * Attachment::setFilename
      *
      * Set Filename email attachment
-     * 
+     *
      * @param string $filename
      *
      * @return  static
      */
-    public function setFilename( $filename )
+    public function setFilename($filename)
     {
         $this->filename = $filename;
 
