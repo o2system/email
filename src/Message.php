@@ -1,6 +1,6 @@
 <?php
 /**
- * This file is part of the O2System PHP Framework package.
+ * This file is part of the O2System Framework package.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -720,6 +720,8 @@ class Message
      *
      * @param string $email
      * @param string $name
+     *
+     * @return static
      */
     public function to($email, $name = null)
     {
@@ -735,9 +737,9 @@ class Message
      *
      * Add mail address to object.
      *
-     * @param string $email
-     * @param string $name
-     * @param string $object
+     * @param string      $email
+     * @param string|null $name
+     * @param string      $object
      *
      * @return void
      */
@@ -795,6 +797,8 @@ class Message
      *
      * @param string $email
      * @param string $name
+     *
+     * @return static
      */
     public function cc($email, $name = null)
     {
@@ -830,6 +834,8 @@ class Message
      *
      * @param string $email
      * @param string $name
+     *
+     * @return static
      */
     public function bcc($email, $name = null, $limit = 100)
     {
@@ -866,6 +872,8 @@ class Message
      *
      * @param array $email
      * @param int   $limit
+     *
+     * @return static
      */
     public function subscribers($email, $limit = 100)
     {
