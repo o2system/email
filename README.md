@@ -1,10 +1,18 @@
+[![O2System Framework](http://o2system.id/assets/img/logo/logo-white-200px.png?logo)](http://o2system.id)
+
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/o2system/email/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/o2system/email/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/o2system/email/badges/build.png?b=master)](https://scrutinizer-ci.com/g/o2system/email/build-status/master)
+[![Latest Stable Version](https://poser.pugx.org/o2system/email/v/stable)](https://packagist.org/packages/o2system/email)
+[![Total Downloads](https://poser.pugx.org/o2system/email/downloads)](https://packagist.org/packages/o2system/email)
+[![License](https://poser.pugx.org/o2system/email/license)](https://packagist.org/packages/o2system/email)
+
 # O2System Email
 O2System Email is a PHP Email Protocol Sender Library which is build for working more powerful with O2System Framework, but also can be used for integrated with others as standalone version with limited features.
 
 ### Composer Installation
 The best way to install O2System Email is to use [Composer](https://getcomposer.org)
 ```
-composer require o2system/email --prefer-dist dev-master
+composer require o2system/email
 ```
 > Packagist: [https://packagist.org/packages/o2system/email](https://packagist.org/packages/o2system/email)
 
@@ -31,19 +39,14 @@ $spool->send( $message );
 Documentation is available on this repository [wiki](https://github.com/o2system/email/wiki) or visit this repository [github page](https://o2system.github.io/email).
 
 ### Ideas and Suggestions
-Please kindly mail us at [o2system.framework@gmail.com](mailto:o2system.framework@gmail.com])
+Please kindly mail us at [contact@o2system.id](mailto:contact@o2system.id])
 
 ### Bugs and Issues
 Please kindly submit your [issues at Github](http://github.com/o2system/email/issues) so we can track all the issues along development and send a [pull request](http://github.com/o2system/email/pulls) to this repository.
 
 ### System Requirements
-- PHP 5.6+
+- PHP 7.2+
 - [Composer](https://getcomposer.org)
 - [O2System Kernel](https://github.com/o2system/kernel)
-
-### Credits
-|Role|Name|
-|----|----|
-|Founder and Lead Projects|[Steeven Andrian Salim](http://steevenz.com)|
-|Documentation|[Steeven Andrian Salim](http://steevenz.com)
-|Github Pages Designer| [Teguh Rianto](http://teguhrianto.tk)
+- [PHPMailer](https://github.com/PHPMailer/PHPMailer)
+- [CSS To Inline Styles](https://github.com/tijsverkoyen/CssToInlineStyles)
