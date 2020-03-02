@@ -1,4 +1,4 @@
-![alt text](https://www.o2system.id/assets/img/covers/cover-o2system-atom-email.png "O2System Email Atom")
+![alt text](https://repository-images.githubusercontent.com/99890241/19c33380-5c9f-11ea-92ff-3fd63a3cf7ea "O2System Email Atom")
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/o2system/email/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/o2system/email/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/o2system/email/badges/build.png?b=master)](https://scrutinizer-ci.com/g/o2system/email/build-status/master)
