@@ -45,7 +45,7 @@ class SmtpProtocol extends Abstracts\AbstractProtocol
 
         $this->config = $this->spool->getConfig();
 
-        if ( ! $this->config->offsetExists('debug')) {
+        if ( ! isset($this->config['debug'])) {
             /**
              * Debug output level.
              * Options:
@@ -58,7 +58,7 @@ class SmtpProtocol extends Abstracts\AbstractProtocol
             $this->config[ 'debug' ] = 0;
         }
 
-        if ( ! $this->config->offsetExists('auth')) {
+        if ( ! isset($this->config['auth'])) {
             $this->config[ 'auth' ] = false;
             if ( ! empty($this->config[ 'username' ])) {
                 $this->config[ 'auth' ] = true;
@@ -98,10 +98,11 @@ class SmtpProtocol extends Abstracts\AbstractProtocol
             $phpMailer->AuthType = $this->config['auth'];
         }
 
-        $phpMailer->Username = $this->config[ 'username' ];
-        $phpMailer->Password = $this->config[ 'password' ];
         $phpMailer->SMTPSecure = $this->config[ 'encryption' ];
         $phpMailer->Port = $this->config[ 'port' ];
+
+        $phpMailer->Username = $this->config[ 'username' ];
+        $phpMailer->Password = $this->config[ 'password' ];
 
         // Set from
         if (false !== ($from = $message->getFrom())) {

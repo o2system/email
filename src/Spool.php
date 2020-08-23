@@ -64,7 +64,7 @@ class Spool
      */
     public function send(Message $message)
     {
-        $protocolClass = '\O2System\Email\Protocols\\' . ucfirst($this->config->offsetGet('protocol')) . 'Protocol';
+        $protocolClass = '\O2System\Email\Protocols\\' . ucfirst($this->config['protocol']) . 'Protocol';
 
         if (class_exists($protocolClass)) {
             $protocol = new $protocolClass($this);
