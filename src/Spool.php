@@ -17,6 +17,7 @@ namespace O2System\Email;
 
 use O2System\Email\DataStructures\Config;
 use O2System\Email\Protocols\Abstracts\AbstractProtocol;
+use O2System\Spl\Traits\Collectors\ConfigCollectorTrait;
 use O2System\Spl\Traits\Collectors\ErrorCollectorTrait;
 
 /**
@@ -26,6 +27,7 @@ use O2System\Spl\Traits\Collectors\ErrorCollectorTrait;
  */
 class Spool
 {
+    use ConfigCollectorTrait;
     use ErrorCollectorTrait;
 
     /**
@@ -36,16 +38,6 @@ class Spool
      * @var Config
      */
     protected $config;
-
-    /**
-     * Spool::$log
-     *
-     * Spool log.
-     *
-     * @var array
-     */
-    protected $log = [];
-
     // ------------------------------------------------------------------------
 
     /**
@@ -59,69 +51,8 @@ class Spool
             $config = new Config();
         }
 
-        $this->setConfig($config);
+        $this->setConfig($config->getArrayCopy());
     }
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * Spool::getConfig
-     *
-     * Gets spool configurations.
-     *
-     * @return Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * Spool::setConfig
-     *
-     * Sets spool config.
-     *
-     * @param Config $config
-     *
-     * @return static
-     */
-    public function setConfig(Config $config)
-    {
-        $this->config = $config;
-
-        return $this;
-    }
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * Spool::addLog
-     *
-     * Add spool log.
-     *
-     * @param $log
-     */
-    public function addLog($log)
-    {
-        $this->log[] = $log;
-    }
-
-    // ------------------------------------------------------------------------
-
-    /**
-     * Spool::getLog
-     *
-     * Gets spool log.
-     *
-     * @return array
-     */
-    public function getLog()
-    {
-        return $this->log;
-    }
-
     // ------------------------------------------------------------------------
 
     /**
@@ -133,13 +64,17 @@ class Spool
      */
     public function send(Message $message)
     {
-        $protocolClass = '\O2System\Email\Protocols\\' . ucfirst($this->config->offsetGet('protocol')) . 'Protocol';
+        $protocolClass = '\O2System\Email\Protocols\\' . ucfirst($this->config['protocol']) . 'Protocol';
 
         if (class_exists($protocolClass)) {
             $protocol = new $protocolClass($this);
 
             if ($protocol instanceof AbstractProtocol) {
-                return $protocol->send($message);
+                if($protocol->send($message)) {
+                    return true;
+                }
+
+                $this->setErrors($protocol->getErrors());
             }
         }
 
